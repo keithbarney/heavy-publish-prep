@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- HEAVY_THEME -->
+  <style>
+    body {
+      height: auto;
+      min-height: 100vh;
+    }
+
+    .specs {
+      margin-bottom: 12px;
+    }
+
+    .specs table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .specs td {
+      padding: 4px 0;
+      border-bottom: 1px solid #4f5b66;
+    }
+
+    .specs td:first-child {
+      color: #eff1f5;
+      font-weight: 500;
+    }
+
+    .specs td:last-child {
+      text-align: right;
+      color: #65737e;
+    }
+
+    .specs tr:last-child td {
+      border-bottom: none;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group input[type="number"] {
+      width: 60px;
+      text-align: center;
+    }
+
+    .form-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .feedback-link {
+      text-align: center;
+      margin-top: 8px;
+      font-size: 10px;
+    }
+
+    .feedback-link a {
+      color: #65737e;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .feedback-link a:hover {
+      color: #8fa1b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Heavy Publish Prep</h1>
+  </div>
+
+  <div class="specs">
+    <h2>Figma Community Specs</h2>
+    <table>
+      <tr><td>Icon</td><td>128 x 128</td></tr>
+      <tr><td>Cover Image</td><td>1920 x 960</td></tr>
+      <tr><td>Screenshots</td><td>1920 x 960</td></tr>
+    </table>
+  </div>
+
+  <div class="form-group">
+    <div class="form-row">
+      <label style="margin-bottom: 0;">Screenshots</label>
+      <input type="number" id="screenshot-count" value="2" min="0" max="10">
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-secondary" id="cancel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>Cancel</button>
+    <button class="btn-primary" id="create"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>Create</button>
+  </div>
+
+  <div class="support-link">
+    <a href="#" id="support-link">Support this plugin &#9829;</a>
+  </div>
+
+  <div class="feedback-link">
+    <a href="#" id="feedback-link">Send feedback</a>
+  </div>
+
+  <script>
+    const SUPPORT_URL = 'https://heavy.lemonsqueezy.com';
+    const FEEDBACK_URL = 'https://github.com/keithbarney';
+
+    const createBtn = document.getElementById('create');
+    const cancelBtn = document.getElementById('cancel');
+    const screenshotInput = document.getElementById('screenshot-count');
+
+    function doCreate() {
+      const count = parseInt(screenshotInput.value, 10) || 0;
+      const clamped = Math.max(0, Math.min(10, count));
+      parent.postMessage({ pluginMessage: { type: 'create', screenshotCount: clamped } }, '*');
+    }
+
+    createBtn.addEventListener('click', doCreate);
+
+    cancelBtn.addEventListener('click', () => {
+      parent.postMessage({ pluginMessage: { type: 'close' } }, '*');
+    });
+
+    document.getElementById('support-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      parent.postMessage({ pluginMessage: { type: 'open-url', url: SUPPORT_URL } }, '*');
+    });
+
+    document.getElementById('feedback-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      parent.postMessage({ pluginMessage: { type: 'open-url', url: FEEDBACK_URL } }, '*');
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target !== screenshotInput) doCreate();
+      if (e.key === 'Escape') cancelBtn.click();
+    });
+
+    // Also submit on Enter from the input itself
+    screenshotInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        doCreate();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "heavy-publish-prep",
+  "version": "1.0.0",
+  "description": "Create correctly-sized frames for Figma Community publishing assets",
+  "scripts": {
+    "build:ui": "node build-ui.js",
+    "build:code": "esbuild code.ts --bundle --target=es6 --outfile=dist/code.js --minify",
+    "build": "npm run build:ui && npm run build:code",
+    "dev:code": "esbuild code.ts --bundle --target=es6 --outfile=dist/code.js --watch",
+    "dev": "npm run build:ui && npm run dev:code",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.98.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.0"
+  }
+}
