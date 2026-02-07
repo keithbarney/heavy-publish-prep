@@ -3,21 +3,25 @@
  */
 
 // ============================================================================
-// MESSAGE TYPES - Customize these for your plugin
+// MESSAGE TYPES
 // ============================================================================
+
+export type ScreenshotTemplate = 'none' | 'browser' | 'centered';
+export type Preset = 'figma' | 'github';
 
 /** Messages from UI to Plugin */
 export type UIMessage =
-  | { type: 'create'; screenshotCount: number }
+  | { type: 'create'; screenshotCount: number; screenshotTemplate: ScreenshotTemplate; preset: Preset }
   | { type: 'close' }
-  | { type: 'open-url'; url: string };
+  | { type: 'open-url'; url: string }
+  | { type: 'export-all' };
 
 /** Messages from Plugin to UI */
 export type PluginMessage =
   | { type: 'result'; data: unknown }
   | { type: 'error'; message: string }
   | { type: 'loading'; loading: boolean }
-  | { type: 'selection-changed'; count: number };
+  | { type: 'init'; screenshotCount: number; screenshotTemplate: ScreenshotTemplate; preset: Preset };
 
 // ============================================================================
 // PLUGIN SIDE
@@ -58,34 +62,3 @@ export function createMessageHandler(
     }
   };
 }
-
-// ============================================================================
-// UI SIDE (use in ui.html script)
-// ============================================================================
-
-/**
- * Example usage in ui.html:
- *
- * <script>
- *   // Send to plugin
- *   function sendToPlugin(message) {
- *     parent.postMessage({ pluginMessage: message }, '*');
- *   }
- *
- *   // Receive from plugin
- *   window.onmessage = (event) => {
- *     const msg = event.data.pluginMessage;
- *     switch (msg.type) {
- *       case 'result':
- *         handleResult(msg.data);
- *         break;
- *       case 'error':
- *         handleError(msg.message);
- *         break;
- *       case 'loading':
- *         handleLoading(msg.loading);
- *         break;
- *     }
- *   };
- * </script>
- */

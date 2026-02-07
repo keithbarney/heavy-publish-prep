@@ -377,7 +377,7 @@ tr:last-child td {
     }
 
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .form-group input[type="number"] {
@@ -385,10 +385,37 @@ tr:last-child td {
       text-align: center;
     }
 
+    .form-group select {
+      width: auto;
+      min-width: 140px;
+      padding: 6px 8px;
+      font-family: inherit;
+      font-size: 11px;
+      color: #c0c5ce;
+      border: 1px solid #4f5b66;
+      border-radius: 3px;
+      background: #343d46;
+    }
+
+    .form-group select:focus {
+      outline: none;
+      border-color: #8fa1b3;
+    }
+
     .form-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    .export-row {
+      margin-top: 8px;
+    }
+
+    .export-row button {
+      width: 100%;
+      font-size: 10px;
+      padding: 6px 8px;
     }
 
     .feedback-link {
@@ -413,25 +440,53 @@ tr:last-child td {
     <h1>Heavy Publish Prep</h1>
   </div>
 
-  <div class="specs">
-    <h2>Figma Community Specs</h2>
-    <table>
-      <tr><td>Icon</td><td>128 x 128</td></tr>
-      <tr><td>Cover Image</td><td>1920 x 960</td></tr>
-      <tr><td>Screenshots</td><td>1920 x 960</td></tr>
-    </table>
-  </div>
-
+  <!-- Platform preset -->
   <div class="form-group">
     <div class="form-row">
-      <label style="margin-bottom: 0;">Screenshots</label>
-      <input type="number" id="screenshot-count" value="2" min="0" max="10">
+      <label style="margin-bottom: 0;">Platform</label>
+      <select id="preset">
+        <option value="figma">Figma Community</option>
+        <option value="github">GitHub</option>
+      </select>
     </div>
   </div>
 
+  <!-- Dynamic specs -->
+  <div class="specs">
+    <h2>Asset Specs</h2>
+    <table><tbody id="specs-body"></tbody></table>
+  </div>
+
+  <!-- Screenshot options (hidden for presets without screenshots) -->
+  <div id="screenshot-options">
+    <div class="form-group">
+      <div class="form-row">
+        <label style="margin-bottom: 0;">Screenshots</label>
+        <input type="number" id="screenshot-count" value="2" min="0" max="10">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-row">
+        <label style="margin-bottom: 0;">Template</label>
+        <select id="screenshot-template">
+          <option value="none">None</option>
+          <option value="browser">Browser Mockup</option>
+          <option value="centered">Centered + Caption</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
   <div class="actions">
     <button class="btn-secondary" id="cancel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>Cancel</button>
     <button class="btn-primary" id="create"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>Create</button>
+  </div>
+
+  <!-- Export all -->
+  <div class="export-row">
+    <button class="btn-secondary" id="export-all"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Select All for Export</button>
   </div>
 
   <div class="support-link">
@@ -446,44 +501,91 @@ tr:last-child td {
     const SUPPORT_URL = 'https://heavy.lemonsqueezy.com';
     const FEEDBACK_URL = 'https://github.com/keithbarney';
 
+    const PRESET_SPECS = {
+      figma: {
+        specs: [
+          { name: 'Icon', size: '128 \u00d7 128' },
+          { name: 'Cover Image', size: '1920 \u00d7 960' },
+          { name: 'Screenshots', size: '1920 \u00d7 960' },
+        ],
+        hasScreenshots: true,
+      },
+      github: {
+        specs: [
+          { name: 'Social Preview', size: '1280 \u00d7 640' },
+        ],
+        hasScreenshots: false,
+      },
+    };
+
+    const presetSelect = document.getElementById('preset');
+    const specsBody = document.getElementById('specs-body');
+    const screenshotOptions = document.getElementById('screenshot-options');
+    const screenshotInput = document.getElementById('screenshot-count');
+    const templateSelect = document.getElementById('screenshot-template');
     const createBtn = document.getElementById('create');
     const cancelBtn = document.getElementById('cancel');
-    const screenshotInput = document.getElementById('screenshot-count');
+    const exportBtn = document.getElementById('export-all');
+
+    function updatePreset() {
+      const config = PRESET_SPECS[presetSelect.value];
+      specsBody.innerHTML = config.specs.map(function(s) {
+        return '<tr><td>' + s.name + '</td><td>' + s.size + '</td></tr>';
+      }).join('');
+      screenshotOptions.style.display = config.hasScreenshots ? 'block' : 'none';
+    }
+
+    presetSelect.addEventListener('change', updatePreset);
+    updatePreset();
+
+    // Handle init message with saved settings
+    window.onmessage = function(event) {
+      var msg = event.data.pluginMessage;
+      if (!msg) return;
+
+      if (msg.type === 'init') {
+        presetSelect.value = msg.preset;
+        screenshotInput.value = msg.screenshotCount;
+        templateSelect.value = msg.screenshotTemplate;
+        updatePreset();
+      }
+    };
 
     function doCreate() {
-      const count = parseInt(screenshotInput.value, 10) || 0;
-      const clamped = Math.max(0, Math.min(10, count));
-      parent.postMessage({ pluginMessage: { type: 'create', screenshotCount: clamped } }, '*');
+      var count = parseInt(screenshotInput.value, 10) || 0;
+      var clamped = Math.max(0, Math.min(10, count));
+      parent.postMessage({ pluginMessage: {
+        type: 'create',
+        screenshotCount: clamped,
+        screenshotTemplate: templateSelect.value,
+        preset: presetSelect.value,
+      } }, '*');
     }
 
     createBtn.addEventListener('click', doCreate);
 
-    cancelBtn.addEventListener('click', () => {
+    cancelBtn.addEventListener('click', function() {
       parent.postMessage({ pluginMessage: { type: 'close' } }, '*');
     });
 
-    document.getElementById('support-link').addEventListener('click', (e) => {
+    exportBtn.addEventListener('click', function() {
+      parent.postMessage({ pluginMessage: { type: 'export-all' } }, '*');
+    });
+
+    document.getElementById('support-link').addEventListener('click', function(e) {
       e.preventDefault();
       parent.postMessage({ pluginMessage: { type: 'open-url', url: SUPPORT_URL } }, '*');
     });
 
-    document.getElementById('feedback-link').addEventListener('click', (e) => {
+    document.getElementById('feedback-link').addEventListener('click', function(e) {
       e.preventDefault();
       parent.postMessage({ pluginMessage: { type: 'open-url', url: FEEDBACK_URL } }, '*');
     });
 
     // Keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && e.target !== screenshotInput) doCreate();
+    document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') cancelBtn.click();
-    });
-
-    // Also submit on Enter from the input itself
-    screenshotInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        doCreate();
-      }
+      if (e.key === 'Enter' && e.target.tagName !== 'SELECT') doCreate();
     });
   </script>
 </body>
