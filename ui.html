@@ -5,6 +5,58 @@
 /* Heavy Theme — Spacegray / Base16 Ocean */
 
 /* ================================================================
+   TOKENS
+   ================================================================ */
+
+:root {
+  /* Colors — UI */
+  --color-bg: #2b303b;
+  --color-surface: #343d46;
+  --color-border: #4f5b66;
+  --color-border-focus: #65737e;
+
+  /* Colors — Text */
+  --color-text: #c0c5ce;
+  --color-text-strong: #eff1f5;
+  --color-text-muted: #65737e;
+  --color-text-disabled: rgba(192, 197, 206, 0.2);
+  --color-text-placeholder: rgba(192, 197, 206, 0.4);
+
+  /* Colors — Interactive */
+  --color-accent: #8fa1b3;
+  --color-btn-bg: rgba(79, 91, 102, 0.5);
+  --color-btn-bg-hover: rgba(79, 91, 102, 0.7);
+  --color-btn-bg-disabled: rgba(79, 91, 102, 0.3);
+  --color-btn-primary: #a7adba;
+
+  /* Colors — Feedback */
+  --color-success: #a3be8c;
+  --color-danger: #bf616a;
+  --color-danger-bg: rgba(191, 97, 106, 0.15);
+  --color-danger-bg-hover: rgba(191, 97, 106, 0.25);
+
+  /* Typography */
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-size-xs: 10px;
+  --font-size-sm: 11px;
+  --font-size-base: 12px;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 6px;
+  --space-md: 8px;
+  --space-lg: 12px;
+  --space-xl: 16px;
+
+  /* Sizing */
+  --control-height: 32px;
+  --radius: 3px;
+
+  /* Motion */
+  --transition: 100ms ease;
+}
+
+/* ================================================================
    RESET
    ================================================================ */
 
@@ -16,7 +68,7 @@ html {
 }
 
 html {
-  background: #2b303b;
+  background: var(--color-surface);
 }
 
 /* ================================================================
@@ -24,11 +76,11 @@ html {
    ================================================================ */
 
 body {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 11px;
-  color: #c0c5ce;
-  background: #2b303b;
-  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  background: var(--color-surface);
+  padding: var(--space-xl);
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -39,17 +91,17 @@ body {
    ================================================================ */
 
 h1 {
-  font-size: 12px;
+  font-size: var(--font-size-base);
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: #eff1f5;
+  color: var(--color-text-strong);
 }
 
 h2 {
-  font-size: 10px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
-  color: #65737e;
-  margin-bottom: 8px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-md);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -59,7 +111,7 @@ h2 {
    ================================================================ */
 
 .header {
-  margin-bottom: 16px;
+  margin-bottom: var(--space-xl);
 }
 
 /* ================================================================
@@ -68,16 +120,16 @@ h2 {
 
 label {
   display: block;
-  font-size: 10px;
+  font-size: var(--font-size-xs);
   font-weight: 500;
-  color: #65737e;
-  margin-bottom: 6px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-sm);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: var(--space-xl);
 }
 
 /* ================================================================
@@ -86,81 +138,160 @@ label {
 
 input {
   width: 100%;
-  padding: 8px 12px;
+  height: var(--control-height);
+  padding: 0 var(--space-lg);
   font-family: inherit;
-  font-size: 11px;
-  color: #c0c5ce;
-  border: 1px solid #4f5b66;
-  border-radius: 3px;
-  background: #343d46;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-strong);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  transition: color var(--transition), border-color var(--transition);
+}
+
+input:hover {
+  color: var(--color-text-strong);
+}
+
+input:hover::placeholder {
+  color: var(--color-text-strong);
 }
 
 input:focus {
   outline: none;
-  border-color: #8fa1b3;
-  background: #3d4752;
+  border-color: var(--color-border-focus);
+  color: var(--color-text-strong);
+}
+
+input:focus::placeholder {
+  color: var(--color-text-strong);
 }
 
 input::placeholder {
-  color: #65737e;
+  color: var(--color-text-placeholder);
+}
+
+input:disabled {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+input:disabled::placeholder {
+  color: var(--color-text-disabled);
 }
 
 /* ================================================================
-   BUTTONS (Heavy Tabs style)
+   SELECTS
+   ================================================================ */
+
+select {
+  height: var(--control-height);
+  padding: 0 32px 0 var(--space-lg);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-strong);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background-color: var(--color-bg);
+  cursor: pointer;
+  appearance: none;
+  transition: color var(--transition), border-color var(--transition);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23eff1f5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-md) center;
+  background-size: 16px;
+}
+
+select:hover {
+  color: var(--color-text-strong);
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  color: var(--color-text-strong);
+}
+
+select:disabled {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+select option {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* ================================================================
+   BUTTONS
    ================================================================ */
 
 button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 8px 12px;
+  gap: var(--space-sm);
+  height: var(--control-height);
+  padding: 0 var(--space-lg);
   font-family: inherit;
-  font-size: 11px;
-  font-weight: 500;
-  border-radius: 3px;
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  border-radius: var(--radius);
   border: none;
   cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #c0c5ce;
-  transition: background-color 0.15s ease;
+  background-color: var(--color-btn-bg);
+  color: var(--color-text);
+  transition: background-color var(--transition);
 }
 
 button:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--color-btn-bg-hover);
+}
+
+button:active:not(:disabled) {
+  background-color: var(--color-btn-bg);
 }
 
 button:disabled {
-  opacity: 0.5;
+  background-color: var(--color-btn-bg-disabled);
+  color: rgba(192, 197, 206, 0.3);
   cursor: not-allowed;
 }
 
 .btn-primary {
-  background-color: #8fa1b3;
-  color: #2b303b;
+  background-color: var(--color-btn-primary);
+  color: var(--color-bg);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #7d91a3;
+  background-color: var(--color-btn-primary);
+}
+
+.btn-primary:active:not(:disabled) {
+  background-color: var(--color-btn-primary);
+}
+
+.btn-primary:disabled {
+  background-color: var(--color-btn-primary);
+  color: rgba(43, 48, 59, 0.3);
 }
 
 .btn-secondary {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #c0c5ce;
+  background-color: var(--color-btn-bg);
+  color: var(--color-text);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--color-btn-bg-hover);
 }
 
 .btn-danger {
-  background-color: rgba(191, 97, 106, 0.15);
-  color: #bf616a;
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
 }
 
 .btn-danger:hover:not(:disabled) {
-  background-color: rgba(191, 97, 106, 0.25);
+  background-color: var(--color-danger-bg-hover);
 }
 
 /* ================================================================
@@ -174,7 +305,7 @@ button svg {
 }
 
 .btn-primary svg {
-  stroke: #2b303b;
+  stroke: var(--color-bg);
 }
 
 /* ================================================================
@@ -183,8 +314,8 @@ button svg {
 
 .actions {
   display: flex;
-  gap: 8px;
-  margin-top: 12px;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
 }
 
 .actions button {
@@ -198,24 +329,24 @@ button svg {
 .results,
 .preview {
   flex: 1;
-  background: #343d46;
-  border: 1px solid #4f5b66;
-  border-radius: 3px;
-  padding: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-lg);
   overflow-y: auto;
 }
 
 .preview.empty {
-  color: #65737e;
+  color: var(--color-text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .preview.error {
-  color: #bf616a;
+  color: var(--color-danger);
   background: #342b2d;
-  border-color: #bf616a;
+  border-color: var(--color-danger);
 }
 
 /* ================================================================
@@ -225,24 +356,24 @@ button svg {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 11px;
+  font-size: var(--font-size-sm);
 }
 
 th {
   text-align: left;
   font-weight: 600;
-  color: #65737e;
-  padding: 6px 8px;
-  border-bottom: 1px solid #4f5b66;
-  font-size: 10px;
+  color: var(--color-text-muted);
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 td {
-  padding: 6px 8px;
-  border-bottom: 1px solid #4f5b66;
-  color: #c0c5ce;
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
 }
 
 tr:last-child td {
@@ -255,13 +386,13 @@ tr:last-child td {
 
 .match-list {
   list-style: none;
-  font-size: 11px;
+  font-size: var(--font-size-sm);
 }
 
 .match-list li {
-  padding: 4px 0;
-  border-bottom: 1px solid #4f5b66;
-  color: #c0c5ce;
+  padding: var(--space-xs) 0;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
 }
 
 .match-list li:last-child {
@@ -274,9 +405,9 @@ tr:last-child td {
 
 .status {
   text-align: center;
-  font-size: 11px;
-  color: #65737e;
-  margin-top: 8px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--space-md);
 }
 
 .status:empty {
@@ -284,11 +415,11 @@ tr:last-child td {
 }
 
 .status.success {
-  color: #a3be8c;
+  color: var(--color-success);
 }
 
 .status.error {
-  color: #bf616a;
+  color: var(--color-danger);
 }
 
 /* ================================================================
@@ -296,11 +427,11 @@ tr:last-child td {
    ================================================================ */
 
 .filename {
-  font-size: 11px;
-  color: #65737e;
-  background: #343d46;
-  padding: 4px 8px;
-  border-radius: 3px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius);
 }
 
 /* ================================================================
@@ -310,14 +441,14 @@ tr:last-child td {
 .hex-cell {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-md);
 }
 
 .color-swatch {
   width: 14px;
   height: 14px;
   border-radius: 2px;
-  border: 1px solid #4f5b66;
+  border: 1px solid var(--color-border);
 }
 
 /* ================================================================
@@ -326,25 +457,24 @@ tr:last-child td {
 
 .support-link {
   text-align: center;
-  margin-top: 12px;
-  font-size: 10px;
+  margin-top: var(--space-lg);
+  font-size: var(--font-size-xs);
 }
 
 .support-link a {
-  color: #65737e;
+  color: var(--color-text-muted);
   text-decoration: none;
-  transition: color 0.15s ease;
+  transition: color 150ms ease;
 }
 
 .support-link a:hover {
-  color: #8fa1b3;
+  color: var(--color-accent);
 }
 
   </style>
   <style>
     body {
       height: auto;
-      min-height: 100vh;
     }
 
     .specs {
@@ -388,18 +518,6 @@ tr:last-child td {
     .form-group select {
       width: auto;
       min-width: 140px;
-      padding: 6px 8px;
-      font-family: inherit;
-      font-size: 11px;
-      color: #c0c5ce;
-      border: 1px solid #4f5b66;
-      border-radius: 3px;
-      background: #343d46;
-    }
-
-    .form-group select:focus {
-      outline: none;
-      border-color: #8fa1b3;
     }
 
     .form-row {
@@ -433,11 +551,51 @@ tr:last-child td {
     .feedback-link a:hover {
       color: #8fa1b3;
     }
+
+    .upload-group {
+      margin-bottom: 12px;
+    }
+
+    .upload-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .upload-btn {
+      height: 32px;
+      padding: 0 12px;
+      font-family: inherit;
+      font-size: 11px;
+      color: #c0c5ce;
+      background-color: rgba(79, 91, 102, 0.5);
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background-color 100ms ease;
+    }
+
+    .upload-btn:hover {
+      background-color: rgba(79, 91, 102, 0.7);
+    }
+
+    .upload-count {
+      font-size: 10px;
+      color: #65737e;
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>Heavy Publish Prep</h1>
+  <!-- Cover info -->
+  <div class="form-group">
+    <label>Name</label>
+    <input type="text" id="plugin-name" placeholder="My Plugin">
+  </div>
+
+  <div class="form-group">
+    <label>Description</label>
+    <input type="text" id="plugin-description" placeholder="What it does in one line">
   </div>
 
   <!-- Platform preset -->
@@ -473,8 +631,22 @@ tr:last-child td {
           <option value="none">None</option>
           <option value="browser">Browser Mockup</option>
           <option value="centered">Centered + Caption</option>
+          <option value="phone">Phone Mockup</option>
+          <option value="tablet">Tablet Mockup</option>
         </select>
       </div>
+    </div>
+
+    <div class="upload-group">
+      <div class="upload-row">
+        <label style="margin-bottom: 0;">Images</label>
+        <button type="button" class="upload-btn" id="upload-btn">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Choose files
+        </button>
+        <input type="file" id="screenshot-files" accept="image/*" multiple style="display: none;">
+      </div>
+      <div class="upload-count" id="upload-count"></div>
     </div>
   </div>
 
@@ -518,6 +690,8 @@ tr:last-child td {
       },
     };
 
+    const pluginNameInput = document.getElementById('plugin-name');
+    const pluginDescInput = document.getElementById('plugin-description');
     const presetSelect = document.getElementById('preset');
     const specsBody = document.getElementById('specs-body');
     const screenshotOptions = document.getElementById('screenshot-options');
@@ -526,6 +700,15 @@ tr:last-child td {
     const createBtn = document.getElementById('create');
     const cancelBtn = document.getElementById('cancel');
     const exportBtn = document.getElementById('export-all');
+    const uploadBtn = document.getElementById('upload-btn');
+    const fileInput = document.getElementById('screenshot-files');
+    const uploadCount = document.getElementById('upload-count');
+
+    uploadBtn.addEventListener('click', function() { fileInput.click(); });
+    fileInput.addEventListener('change', function() {
+      var n = fileInput.files.length;
+      uploadCount.textContent = n > 0 ? n + ' image' + (n > 1 ? 's' : '') + ' selected' : '';
+    });
 
     function updatePreset() {
       const config = PRESET_SPECS[presetSelect.value];
@@ -544,6 +727,8 @@ tr:last-child td {
       if (!msg) return;
 
       if (msg.type === 'init') {
+        pluginNameInput.value = msg.pluginName;
+        pluginDescInput.value = msg.pluginDescription;
         presetSelect.value = msg.preset;
         screenshotInput.value = msg.screenshotCount;
         templateSelect.value = msg.screenshotTemplate;
@@ -551,15 +736,65 @@ tr:last-child td {
       }
     };
 
+    function resizeImageFile(file, maxW, maxH) {
+      return new Promise(function(resolve, reject) {
+        var img = new Image();
+        img.onload = function() {
+          var w = img.width;
+          var h = img.height;
+          if (w > maxW || h > maxH) {
+            var scale = Math.min(maxW / w, maxH / h);
+            w = Math.round(w * scale);
+            h = Math.round(h * scale);
+          }
+          var canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          canvas.toBlob(function(blob) {
+            var reader = new FileReader();
+            reader.onload = function() { resolve(reader.result); };
+            reader.onerror = function() { reject(reader.error); };
+            reader.readAsArrayBuffer(blob);
+          }, 'image/png');
+          URL.revokeObjectURL(img.src);
+        };
+        img.onerror = function() {
+          URL.revokeObjectURL(img.src);
+          reject(new Error('Failed to load image'));
+        };
+        img.src = URL.createObjectURL(file);
+      });
+    }
+
     function doCreate() {
       var count = parseInt(screenshotInput.value, 10) || 0;
       var clamped = Math.max(0, Math.min(10, count));
-      parent.postMessage({ pluginMessage: {
-        type: 'create',
-        screenshotCount: clamped,
-        screenshotTemplate: templateSelect.value,
-        preset: presetSelect.value,
-      } }, '*');
+      var files = Array.from(fileInput.files);
+      var preset = PRESET_SPECS[presetSelect.value];
+      var maxW = preset.hasScreenshots ? 1920 : 1280;
+      var maxH = preset.hasScreenshots ? 960 : 640;
+
+      var sendMessage = function(images) {
+        var msg = {
+          type: 'create',
+          pluginName: pluginNameInput.value.trim(),
+          pluginDescription: pluginDescInput.value.trim(),
+          screenshotCount: clamped,
+          screenshotTemplate: templateSelect.value,
+          preset: presetSelect.value,
+        };
+        if (images && images.length > 0) {
+          msg.images = images;
+        }
+        parent.postMessage({ pluginMessage: msg }, '*');
+      };
+
+      if (files.length > 0) {
+        Promise.all(files.map(function(f) { return resizeImageFile(f, maxW, maxH); })).then(sendMessage);
+      } else {
+        sendMessage(null);
+      }
     }
 
     createBtn.addEventListener('click', doCreate);
@@ -585,8 +820,14 @@ tr:last-child td {
     // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') cancelBtn.click();
-      if (e.key === 'Enter' && e.target.tagName !== 'SELECT') doCreate();
+      if (e.key === 'Enter' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'INPUT') doCreate();
     });
+
+    // Auto-resize to fit content
+    new ResizeObserver(function() {
+      var h = document.documentElement.scrollHeight;
+      parent.postMessage({ pluginMessage: { type: 'resize', height: h } }, '*');
+    }).observe(document.body);
   </script>
 </body>
 </html>

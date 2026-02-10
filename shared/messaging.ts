@@ -6,22 +6,23 @@
 // MESSAGE TYPES
 // ============================================================================
 
-export type ScreenshotTemplate = 'none' | 'browser' | 'centered';
+export type ScreenshotTemplate = 'none' | 'browser' | 'centered' | 'phone' | 'tablet';
 export type Preset = 'figma' | 'github';
 
 /** Messages from UI to Plugin */
 export type UIMessage =
-  | { type: 'create'; screenshotCount: number; screenshotTemplate: ScreenshotTemplate; preset: Preset }
+  | { type: 'create'; pluginName: string; pluginDescription: string; screenshotCount: number; screenshotTemplate: ScreenshotTemplate; preset: Preset; images?: ArrayBuffer[] }
   | { type: 'close' }
   | { type: 'open-url'; url: string }
-  | { type: 'export-all' };
+  | { type: 'export-all' }
+  | { type: 'resize'; height: number };
 
 /** Messages from Plugin to UI */
 export type PluginMessage =
   | { type: 'result'; data: unknown }
   | { type: 'error'; message: string }
   | { type: 'loading'; loading: boolean }
-  | { type: 'init'; screenshotCount: number; screenshotTemplate: ScreenshotTemplate; preset: Preset };
+  | { type: 'init'; pluginName: string; pluginDescription: string; screenshotCount: number; screenshotTemplate: ScreenshotTemplate; preset: Preset };
 
 // ============================================================================
 // PLUGIN SIDE

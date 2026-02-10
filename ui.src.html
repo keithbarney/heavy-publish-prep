@@ -5,7 +5,6 @@
   <style>
     body {
       height: auto;
-      min-height: 100vh;
     }
 
     .specs {
@@ -49,18 +48,6 @@
     .form-group select {
       width: auto;
       min-width: 140px;
-      padding: 6px 8px;
-      font-family: inherit;
-      font-size: 11px;
-      color: #c0c5ce;
-      border: 1px solid #4f5b66;
-      border-radius: 3px;
-      background: #343d46;
-    }
-
-    .form-group select:focus {
-      outline: none;
-      border-color: #8fa1b3;
     }
 
     .form-row {
@@ -94,11 +81,51 @@
     .feedback-link a:hover {
       color: #8fa1b3;
     }
+
+    .upload-group {
+      margin-bottom: 12px;
+    }
+
+    .upload-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .upload-btn {
+      height: 32px;
+      padding: 0 12px;
+      font-family: inherit;
+      font-size: 11px;
+      color: #c0c5ce;
+      background-color: rgba(79, 91, 102, 0.5);
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background-color 100ms ease;
+    }
+
+    .upload-btn:hover {
+      background-color: rgba(79, 91, 102, 0.7);
+    }
+
+    .upload-count {
+      font-size: 10px;
+      color: #65737e;
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>Heavy Publish Prep</h1>
+  <!-- Cover info -->
+  <div class="form-group">
+    <label>Name</label>
+    <input type="text" id="plugin-name" placeholder="My Plugin">
+  </div>
+
+  <div class="form-group">
+    <label>Description</label>
+    <input type="text" id="plugin-description" placeholder="What it does in one line">
   </div>
 
   <!-- Platform preset -->
@@ -134,8 +161,22 @@
           <option value="none">None</option>
           <option value="browser">Browser Mockup</option>
           <option value="centered">Centered + Caption</option>
+          <option value="phone">Phone Mockup</option>
+          <option value="tablet">Tablet Mockup</option>
         </select>
       </div>
+    </div>
+
+    <div class="upload-group">
+      <div class="upload-row">
+        <label style="margin-bottom: 0;">Images</label>
+        <button type="button" class="upload-btn" id="upload-btn">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Choose files
+        </button>
+        <input type="file" id="screenshot-files" accept="image/*" multiple style="display: none;">
+      </div>
+      <div class="upload-count" id="upload-count"></div>
     </div>
   </div>
 
@@ -179,6 +220,8 @@
       },
     };
 
+    const pluginNameInput = document.getElementById('plugin-name');
+    const pluginDescInput = document.getElementById('plugin-description');
     const presetSelect = document.getElementById('preset');
     const specsBody = document.getElementById('specs-body');
     const screenshotOptions = document.getElementById('screenshot-options');
@@ -187,6 +230,15 @@
     const createBtn = document.getElementById('create');
     const cancelBtn = document.getElementById('cancel');
     const exportBtn = document.getElementById('export-all');
+    const uploadBtn = document.getElementById('upload-btn');
+    const fileInput = document.getElementById('screenshot-files');
+    const uploadCount = document.getElementById('upload-count');
+
+    uploadBtn.addEventListener('click', function() { fileInput.click(); });
+    fileInput.addEventListener('change', function() {
+      var n = fileInput.files.length;
+      uploadCount.textContent = n > 0 ? n + ' image' + (n > 1 ? 's' : '') + ' selected' : '';
+    });
 
     function updatePreset() {
       const config = PRESET_SPECS[presetSelect.value];
@@ -205,6 +257,8 @@
       if (!msg) return;
 
       if (msg.type === 'init') {
+        pluginNameInput.value = msg.pluginName;
+        pluginDescInput.value = msg.pluginDescription;
         presetSelect.value = msg.preset;
         screenshotInput.value = msg.screenshotCount;
         templateSelect.value = msg.screenshotTemplate;
@@ -212,15 +266,65 @@
       }
     };
 
+    function resizeImageFile(file, maxW, maxH) {
+      return new Promise(function(resolve, reject) {
+        var img = new Image();
+        img.onload = function() {
+          var w = img.width;
+          var h = img.height;
+          if (w > maxW || h > maxH) {
+            var scale = Math.min(maxW / w, maxH / h);
+            w = Math.round(w * scale);
+            h = Math.round(h * scale);
+          }
+          var canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          canvas.toBlob(function(blob) {
+            var reader = new FileReader();
+            reader.onload = function() { resolve(reader.result); };
+            reader.onerror = function() { reject(reader.error); };
+            reader.readAsArrayBuffer(blob);
+          }, 'image/png');
+          URL.revokeObjectURL(img.src);
+        };
+        img.onerror = function() {
+          URL.revokeObjectURL(img.src);
+          reject(new Error('Failed to load image'));
+        };
+        img.src = URL.createObjectURL(file);
+      });
+    }
+
     function doCreate() {
       var count = parseInt(screenshotInput.value, 10) || 0;
       var clamped = Math.max(0, Math.min(10, count));
-      parent.postMessage({ pluginMessage: {
-        type: 'create',
-        screenshotCount: clamped,
-        screenshotTemplate: templateSelect.value,
-        preset: presetSelect.value,
-      } }, '*');
+      var files = Array.from(fileInput.files);
+      var preset = PRESET_SPECS[presetSelect.value];
+      var maxW = preset.hasScreenshots ? 1920 : 1280;
+      var maxH = preset.hasScreenshots ? 960 : 640;
+
+      var sendMessage = function(images) {
+        var msg = {
+          type: 'create',
+          pluginName: pluginNameInput.value.trim(),
+          pluginDescription: pluginDescInput.value.trim(),
+          screenshotCount: clamped,
+          screenshotTemplate: templateSelect.value,
+          preset: presetSelect.value,
+        };
+        if (images && images.length > 0) {
+          msg.images = images;
+        }
+        parent.postMessage({ pluginMessage: msg }, '*');
+      };
+
+      if (files.length > 0) {
+        Promise.all(files.map(function(f) { return resizeImageFile(f, maxW, maxH); })).then(sendMessage);
+      } else {
+        sendMessage(null);
+      }
     }
 
     createBtn.addEventListener('click', doCreate);
@@ -246,8 +350,14 @@
     // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') cancelBtn.click();
-      if (e.key === 'Enter' && e.target.tagName !== 'SELECT') doCreate();
+      if (e.key === 'Enter' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'INPUT') doCreate();
     });
+
+    // Auto-resize to fit content
+    new ResizeObserver(function() {
+      var h = document.documentElement.scrollHeight;
+      parent.postMessage({ pluginMessage: { type: 'resize', height: h } }, '*');
+    }).observe(document.body);
   </script>
 </body>
 </html>
