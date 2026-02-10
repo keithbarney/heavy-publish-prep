@@ -11,7 +11,7 @@ export type Preset = 'figma' | 'github';
 
 /** Messages from UI to Plugin */
 export type UIMessage =
-  | { type: 'create'; pluginName: string; pluginDescription: string; screenshotCount: number; screenshotTemplate: ScreenshotTemplate; preset: Preset; images?: ArrayBuffer[] }
+  | { type: 'create'; pluginName: string; pluginDescription: string; screenshotCount: number; screenshotTemplate: ScreenshotTemplate; preset: Preset; images?: ArrayBuffer[]; imageNames?: string[] }
   | { type: 'close' }
   | { type: 'open-url'; url: string }
   | { type: 'export-all' }

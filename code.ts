@@ -13,8 +13,8 @@ import { UIMessage, ScreenshotTemplate, Preset, sendToUI } from './shared/messag
 const UI_WIDTH = 280;
 const UI_HEIGHT = 480;
 
-const PAGE_NAME = 'Publishing Assets';
 const FRAME_GAP = 80;
+const PAGE_SUFFIX = 'Figma Plugin Assets';
 
 // Storage keys
 const STORE_PLUGIN_NAME = 'publishPrep.pluginName';
@@ -118,7 +118,7 @@ figma.ui.onmessage = async (msg: UIMessage) => {
   if (msg.type === 'create') {
     try {
       await saveSettings(msg.pluginName, msg.pluginDescription, msg.screenshotCount, msg.screenshotTemplate, msg.preset);
-      await createPublishingAssets(msg.pluginName, msg.pluginDescription, msg.preset, msg.screenshotCount, msg.screenshotTemplate, msg.images);
+      await createPublishingAssets(msg.pluginName, msg.pluginDescription, msg.preset, msg.screenshotCount, msg.screenshotTemplate, msg.images, msg.imageNames);
       notifySuccess('Publishing assets created!');
       figma.closePlugin();
     } catch (error) {
@@ -149,9 +149,9 @@ figma.ui.onmessage = async (msg: UIMessage) => {
 // ============================================================================
 
 function exportAll(): void {
-  const page = figma.root.children.find((p) => p.name === PAGE_NAME);
+  const page = figma.root.children.find((p) => p.name.endsWith(PAGE_SUFFIX));
   if (!page) {
-    notifyError('No "Publishing Assets" page found — create assets first');
+    notifyError('No assets page found — create assets first');
     return;
   }
 
@@ -159,7 +159,7 @@ function exportAll(): void {
   const frames = page.children.filter((n): n is FrameNode => n.type === 'FRAME');
 
   if (frames.length === 0) {
-    notifyError('No frames found on Publishing Assets page');
+    notifyError('No frames found on assets page');
     return;
   }
 
@@ -178,12 +178,15 @@ async function createPublishingAssets(
   preset: Preset,
   screenshotCount: number,
   screenshotTemplate: ScreenshotTemplate,
-  images?: ArrayBuffer[]
+  images?: ArrayBuffer[],
+  imageNames?: string[]
 ): Promise<void> {
   await figma.loadFontAsync({ family: 'JetBrains Mono', style: 'Regular' });
 
   const config = PRESETS[preset];
-  const page = getOrCreatePage(PAGE_NAME);
+  const displayName = pluginName || figma.root.name || 'Plugin';
+  const pageName = `${displayName} ${PAGE_SUFFIX}`;
+  const page = getOrCreatePage(pageName);
 
   figma.currentPage = page;
 
@@ -264,7 +267,7 @@ async function createPublishingAssets(
 
   // Apply uploaded images to screenshot frames
   if (images && images.length > 0 && screenshotFrames.length > 0) {
-    applyImages(screenshotFrames, images, screenshotTemplate);
+    applyImages(screenshotFrames, images, screenshotTemplate, imageNames);
   }
 
   figma.currentPage.selection = allFrames;
@@ -648,7 +651,8 @@ function addTabletTemplate(frame: FrameNode, width: number, height: number): voi
 function applyImages(
   screenshotFrames: FrameNode[],
   images: ArrayBuffer[],
-  template: ScreenshotTemplate
+  template: ScreenshotTemplate,
+  imageNames?: string[]
 ): void {
   const count = Math.min(screenshotFrames.length, images.length);
 
@@ -676,8 +680,35 @@ function applyImages(
       if (placeholder) {
         placeholder.fills = [imageFill];
       }
+
+      // Update title text with filename (centered template)
+      const name = imageNames && imageNames[i];
+      if (name) {
+        const titleNode = findTitleText(frame);
+        if (titleNode) {
+          titleNode.characters = name;
+          // Re-center horizontally
+          titleNode.x = Math.round((frame.width - titleNode.width) / 2);
+        }
+      }
     }
   }
+}
+
+function findTitleText(frame: FrameNode): TextNode | null {
+  for (const child of frame.children) {
+    if (child.type === 'TEXT' && child.characters === 'Feature Name') {
+      return child;
+    }
+    if (child.type === 'GROUP') {
+      for (const grandchild of child.children) {
+        if (grandchild.type === 'TEXT' && grandchild.characters === 'Feature Name') {
+          return grandchild;
+        }
+      }
+    }
+  }
+  return null;
 }
 
 function findPlaceholder(frame: FrameNode): RectangleNode | null {

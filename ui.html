@@ -786,6 +786,9 @@ tr:last-child td {
         };
         if (images && images.length > 0) {
           msg.images = images;
+          msg.imageNames = files.map(function(f) {
+            return f.name.replace(/\.[^.]+$/, '');
+          });
         }
         parent.postMessage({ pluginMessage: msg }, '*');
       };
