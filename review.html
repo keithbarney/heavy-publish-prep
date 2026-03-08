@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>HDS Migration Review — Heavy Publish Prep</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body { font-family: system-ui, sans-serif; padding: 32px; transition: background 0.2s, color 0.2s; }
+    body.dark { background: #0a0a0a; color: #fff; }
+    body.light { background: #e8e8e8; color: #111; }
+    h1 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+    .subtitle { font-size: 13px; margin-bottom: 32px; }
+    body.dark .subtitle { color: #666; }
+    body.light .subtitle { color: #888; }
+    .header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+    .header-left { display: flex; flex-direction: column; gap: 8px; }
+    .header-left h1 { margin-bottom: 0; }
+    .theme-toggle { display: flex; gap: 0; border-radius: 6px; overflow: hidden; }
+    body.dark .theme-toggle { border: 1px solid #333; }
+    body.light .theme-toggle { border: 1px solid #ccc; }
+    .theme-toggle button { padding: 8px 16px; font-size: 12px; font-weight: 500; font-family: monospace; background: transparent; border: none; cursor: pointer; }
+    body.dark .theme-toggle button { color: #666; }
+    body.light .theme-toggle button { color: #999; }
+    .theme-toggle button.active { font-weight: 700; }
+    body.dark .theme-toggle button.active { background: #fff; color: #000; }
+    body.light .theme-toggle button.active { background: #111; color: #fff; }
+    .row { margin-bottom: 32px; }
+    .screen { display: flex; flex-direction: column; gap: 8px; }
+    .screen label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+    body.dark .screen label { color: #555; }
+    body.light .screen label { color: #999; }
+    iframe { border-radius: 8px; width: 100%; }
+    body.dark iframe { border: 1px solid #222; }
+    body.light iframe { border: 1px solid #ccc; }
+  </style>
+</head>
+<body class="dark">
+  <div class="header-row">
+    <div class="header-left">
+      <h1>HDS Migration Review</h1>
+      <p class="subtitle">Heavy Publish Prep — all screens at a glance</p>
+    </div>
+    <div class="theme-toggle" id="theme-toggle">
+      <button class="active" data-theme="dark">Dark</button>
+      <button data-theme="light">Light</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="screen">
+      <label>1. Default State</label>
+      <iframe src="ui.html" height="400" id="f1"></iframe>
+    </div>
+  </div>
+
+  <script>
+    // Theme toggle — switches page + all iframes
+    document.getElementById('theme-toggle').addEventListener('click', function(e) {
+      var btn = e.target.closest('button');
+      if (!btn) return;
+      var theme = btn.dataset.theme;
+      this.querySelectorAll('button').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.body.className = theme;
+      var iframes = document.querySelectorAll('iframe');
+      iframes.forEach(function(iframe) {
+        var htmlEl = iframe.contentDocument.documentElement;
+        if (theme === 'dark') {
+          htmlEl.setAttribute('data-theme', 'dark');
+        } else {
+          htmlEl.removeAttribute('data-theme');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -22,6 +22,7 @@ const STORE_PLUGIN_DESCRIPTION = 'publishPrep.pluginDescription';
 const STORE_SCREENSHOT_COUNT = 'publishPrep.screenshotCount';
 const STORE_SCREENSHOT_TEMPLATE = 'publishPrep.screenshotTemplate';
 const STORE_PRESET = 'publishPrep.preset';
+const STORE_SHOW_OUTLINE = 'publishPrep.showOutline';
 
 // ============================================================================
 // PRESETS
@@ -76,12 +77,13 @@ figma.showUI(__html__, {
 loadSettings();
 
 async function loadSettings(): Promise<void> {
-  const [pluginName, pluginDescription, count, template, preset] = await Promise.all([
+  const [pluginName, pluginDescription, count, template, preset, showOutline] = await Promise.all([
     figma.clientStorage.getAsync(STORE_PLUGIN_NAME),
     figma.clientStorage.getAsync(STORE_PLUGIN_DESCRIPTION),
     figma.clientStorage.getAsync(STORE_SCREENSHOT_COUNT),
     figma.clientStorage.getAsync(STORE_SCREENSHOT_TEMPLATE),
     figma.clientStorage.getAsync(STORE_PRESET),
+    figma.clientStorage.getAsync(STORE_SHOW_OUTLINE),
   ]);
 
   sendToUI({
@@ -91,6 +93,7 @@ async function loadSettings(): Promise<void> {
     screenshotCount: count ?? 2,
     screenshotTemplate: template ?? 'none',
     preset: preset ?? 'figma',
+    showOutline: showOutline ?? true,
   });
 }
 
@@ -99,7 +102,8 @@ async function saveSettings(
   pluginDescription: string,
   screenshotCount: number,
   screenshotTemplate: ScreenshotTemplate,
-  preset: Preset
+  preset: Preset,
+  showOutline: boolean
 ): Promise<void> {
   await Promise.all([
     figma.clientStorage.setAsync(STORE_PLUGIN_NAME, pluginName),
@@ -107,6 +111,7 @@ async function saveSettings(
     figma.clientStorage.setAsync(STORE_SCREENSHOT_COUNT, screenshotCount),
     figma.clientStorage.setAsync(STORE_SCREENSHOT_TEMPLATE, screenshotTemplate),
     figma.clientStorage.setAsync(STORE_PRESET, preset),
+    figma.clientStorage.setAsync(STORE_SHOW_OUTLINE, showOutline),
   ]);
 }
 
@@ -117,8 +122,8 @@ async function saveSettings(
 figma.ui.onmessage = async (msg: UIMessage) => {
   if (msg.type === 'create') {
     try {
-      await saveSettings(msg.pluginName, msg.pluginDescription, msg.screenshotCount, msg.screenshotTemplate, msg.preset);
-      await createPublishingAssets(msg.pluginName, msg.pluginDescription, msg.preset, msg.screenshotCount, msg.screenshotTemplate, msg.images, msg.imageNames);
+      await saveSettings(msg.pluginName, msg.pluginDescription, msg.screenshotCount, msg.screenshotTemplate, msg.preset, msg.showOutline);
+      await createPublishingAssets(msg.pluginName, msg.pluginDescription, msg.preset, msg.screenshotCount, msg.screenshotTemplate, msg.showOutline, msg.images, msg.imageNames);
       notifySuccess('Publishing assets created!');
       figma.closePlugin();
     } catch (error) {
@@ -178,6 +183,7 @@ async function createPublishingAssets(
   preset: Preset,
   screenshotCount: number,
   screenshotTemplate: ScreenshotTemplate,
+  showOutline: boolean,
   images?: ArrayBuffer[],
   imageNames?: string[]
 ): Promise<void> {
@@ -256,7 +262,7 @@ async function createPublishingAssets(
       frame.y = 0;
       page.appendChild(frame);
 
-      applyScreenshotTemplate(frame, ss.width, ss.height, screenshotTemplate);
+      applyScreenshotTemplate(frame, ss.width, ss.height, screenshotTemplate, showOutline);
 
       allFrames.push(frame);
       newFrames.push(frame);
@@ -365,12 +371,13 @@ function applyScreenshotTemplate(
   frame: FrameNode,
   width: number,
   height: number,
-  template: ScreenshotTemplate
+  template: ScreenshotTemplate,
+  showOutline: boolean
 ): void {
   if (template === 'browser') {
     addBrowserTemplate(frame, width, height);
   } else if (template === 'centered') {
-    addCenteredTemplate(frame, width, height);
+    addCenteredTemplate(frame, width, height, showOutline);
   } else if (template === 'phone') {
     addPhoneTemplate(frame, width, height);
   } else if (template === 'tablet') {
@@ -484,7 +491,7 @@ function addBrowserTemplate(frame: FrameNode, width: number, height: number): vo
 // CENTERED + CAPTION TEMPLATE
 // ============================================================================
 
-function addCenteredTemplate(frame: FrameNode, width: number, height: number): void {
+function addCenteredTemplate(frame: FrameNode, width: number, height: number, showOutline: boolean): void {
   const font: FontName = { family: 'JetBrains Mono', style: 'Regular' };
   const gap = 24;
   const placeholderW = Math.round(width * 0.85);
@@ -523,8 +530,10 @@ function addCenteredTemplate(frame: FrameNode, width: number, height: number): v
   placeholder.y = placeholderY;
   placeholder.cornerRadius = 8;
   placeholder.fills = [solidPaint('#343d46')];
-  placeholder.strokes = [solidPaint('#4f5b66')];
-  placeholder.strokeWeight = 1;
+  if (showOutline) {
+    placeholder.strokes = [solidPaint('#4f5b66')];
+    placeholder.strokeWeight = 1;
+  }
   frame.appendChild(placeholder);
 
   // Position caption

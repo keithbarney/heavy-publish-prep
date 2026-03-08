@@ -1,0 +1,240 @@
+{
+  "projectName": "heavy-publish-prep",
+  "createdAt": "2026-03-07",
+  "updatedAt": "2026-03-07",
+  "phases": {
+    "idea-vision": {
+      "steps": {
+        "problem-statement": {
+          "tasks": {
+            "ps-1": { "completed": true, "value": "Creating correctly-sized frames for Figma Community publishing assets (icon, cover, screenshots) requires remembering exact dimensions and manually creating frames each time" },
+            "ps-2": { "completed": true, "value": "Figma plugin developers preparing to publish on Figma Community" },
+            "ps-3": { "completed": true, "value": "Pain" },
+            "ps-4": { "completed": true, "value": "Wrong asset dimensions cause rejection or poor display on the Figma Community listing page" },
+            "ps-5": { "completed": true, "value": "Daily" }
+          }
+        },
+        "vision-positioning": {
+          "tasks": {
+            "vp-1": { "completed": true, "value": "One-click generation of correctly-sized frames for all Figma Community publishing assets with preset templates" },
+            "vp-2": { "completed": true, "value": "Create correctly-sized frames for Figma Community publishing assets in one click" },
+            "vp-3": { "completed": true, "value": "Figma plugin developers who publish to Figma Community" }
+          }
+        },
+        "competitive-landscape": {
+          "tasks": {
+            "cl-1": { "completed": true, "value": "No direct competitors — plugin developers manually create asset frames or use templates" },
+            "cl-2": { "completed": true, "value": "Automated frame generation with correct dimensions for all Figma Community asset types, with presets and templates" },
+            "cl-3": { "completed": true, "value": "Icon frame (128x128), screenshot frames (1920x960), cover frame, preset templates, plugin name/description persistence" }
+          }
+        }
+      }
+    },
+    "validation": {
+      "steps": {
+        "validation-research": {
+          "tasks": {
+            "vr-1": { "completed": true, "value": "Built to solve personal pain publishing 14+ Figma plugins to Community" },
+            "vr-2": { "completed": true, "value": "Not yet published — internal tool, in progress" },
+            "vr-3": { "completed": true, "value": "Used internally to generate assets for all Heavy plugin publications" }
+          }
+        },
+        "scope-definition": {
+          "tasks": {
+            "sd-1": { "completed": true, "value": "Enter plugin name, select preset and template, generate correctly-sized asset frames on a dedicated page" },
+            "sd-2": { "completed": true },
+            "sd-3": { "completed": true, "value": "Icon frame, screenshot frames (configurable count), cover frame, preset templates, plugin name/description storage" },
+            "sd-4": { "completed": true, "value": "No image export (just creates frames), no Community API integration" }
+          }
+        }
+      }
+    },
+    "business-model": {
+      "steps": {
+        "revenue-and-costs": {
+          "tasks": {
+            "rc-1": { "completed": true, "value": "Free (no revenue)" },
+            "rc-2": { "completed": true, "value": "Free with PWYW tip jar via Stripe" },
+            "rc-3": { "completed": true, "value": "Stripe" },
+            "rc-4": { "completed": true, "value": "Zero — runs locally as Figma plugin, no hosting costs" },
+            "rc-5": { "completed": true, "value": "N/A — no revenue, no costs" }
+          }
+        },
+        "legal-compliance": {
+          "tasks": {
+            "lc-1": { "completed": false },
+            "lc-2": { "completed": false },
+            "lc-3": { "completed": false },
+            "lc-4": { "completed": false }
+          }
+        }
+      }
+    },
+    "product-definition": {
+      "steps": {
+        "user-stories": {
+          "tasks": {
+            "us-1": { "completed": true, "value": "As a plugin developer, I want to generate correctly-sized Figma Community asset frames so I don't have to remember dimensions or create them manually each time" },
+            "us-2": { "completed": false }
+          }
+        },
+        "ux-flows": {
+          "tasks": {
+            "ux-1": { "completed": true, "value": "Single Figma plugin panel — no multi-screen navigation" },
+            "ux-2": { "completed": true, "value": "N/A — plugin opens ready to use, no onboarding needed" },
+            "ux-3": { "completed": true, "value": "Enter plugin name/description, select preset and screenshot count, click Generate" },
+            "ux-4": { "completed": true, "value": "Settings persist via clientStorage for repeat use" },
+            "ux-5": { "completed": false }
+          }
+        }
+      }
+    },
+    "design": {
+      "steps": {
+        "visual-design": {
+          "tasks": {
+            "vd-1": { "completed": true, "value": "Existing design system" },
+            "vd-2": { "completed": true, "value": "HDS (Heavy Design System) — dark theme, --hds-* tokens" },
+            "vd-3": { "completed": true, "value": "N/A — uses HDS components" },
+            "vd-4": { "completed": true },
+            "vd-5": { "completed": true }
+          }
+        }
+      }
+    },
+    "technical-architecture": {
+      "steps": {
+        "stack-and-infrastructure": {
+          "tasks": {
+            "si-1": { "completed": true, "value": "Figma Plugin API + TypeScript + esbuild. UI via build-ui.js (inlines HDS CSS). No framework." },
+            "si-2": { "completed": true, "value": "Plain CSS" },
+            "si-3": { "completed": true, "value": "Other" },
+            "si-4": { "completed": true, "value": "None — Figma plugins run in browser sandbox" },
+            "si-5": { "completed": true, "value": "Figma Plugin API for canvas manipulation, esbuild for bundling code.ts, build-ui.js for inlining HDS CSS into ui.html. No external dependencies needed." }
+          }
+        },
+        "data-architecture": {
+          "tasks": {
+            "da-1": { "completed": true, "value": "Creates Figma frames with preset dimensions. Stores plugin name, description, screenshot count, template, and preset in clientStorage." },
+            "da-2": { "completed": true, "value": "Other" },
+            "da-3": { "completed": true, "value": "Figma Plugin API — postMessage between sandbox (code.ts) and UI (ui.html)" },
+            "da-4": { "completed": true, "value": "Plugin name, description, and settings persisted via figma.clientStorage" }
+          }
+        },
+        "auth-authorization": {
+          "tasks": {
+            "aa-1": { "completed": true, "value": "No — public/local only" },
+            "aa-2": { "completed": true, "value": "N/A — Figma handles auth" },
+            "aa-3": { "completed": true, "value": "N/A — single user" }
+          }
+        }
+      }
+    },
+    "development": {
+      "steps": {
+        "project-setup": {
+          "tasks": {
+            "ps-setup-1": { "completed": true },
+            "ps-setup-2": { "completed": true },
+            "ps-setup-3": { "completed": true },
+            "ps-setup-4": { "completed": true },
+            "ps-setup-5": { "completed": true }
+          }
+        },
+        "core-features": {
+          "tasks": {
+            "cf-1": { "completed": true },
+            "cf-2": { "completed": true },
+            "cf-3": { "completed": true },
+            "cf-4": { "completed": false },
+            "cf-5": { "completed": false }
+          }
+        },
+        "polish-edge-cases": {
+          "tasks": {
+            "pe-1": { "completed": false },
+            "pe-2": { "completed": false },
+            "pe-3": { "completed": false },
+            "pe-4": { "completed": false },
+            "pe-5": { "completed": false }
+          }
+        }
+      }
+    },
+    "testing-qa": {
+      "steps": {
+        "testing": {
+          "tasks": {
+            "t-1": { "completed": false },
+            "t-2": { "completed": false },
+            "t-3": { "completed": false },
+            "t-4": { "completed": false },
+            "t-5": { "completed": false },
+            "t-6": { "completed": false }
+          }
+        }
+      }
+    },
+    "launch-prep": {
+      "steps": {
+        "content-and-seo": {
+          "tasks": {
+            "cs-1": { "completed": false, "value": "Heavy Publish Prep — create correctly-sized Figma Community publishing assets" },
+            "cs-2": { "completed": false },
+            "cs-3": { "completed": false },
+            "cs-4": { "completed": false },
+            "cs-5": { "completed": true, "value": "None yet" }
+          }
+        },
+        "pre-launch-checklist": {
+          "tasks": {
+            "plc-1": { "completed": false },
+            "plc-2": { "completed": true },
+            "plc-3": { "completed": true },
+            "plc-4": { "completed": false },
+            "plc-5": { "completed": false }
+          }
+        }
+      }
+    },
+    "marketing": {
+      "steps": {
+        "launch-marketing": {
+          "tasks": {
+            "lm-1": { "completed": false },
+            "lm-2": { "completed": false },
+            "lm-3": { "completed": false },
+            "lm-4": { "completed": false },
+            "lm-5": { "completed": false }
+          }
+        }
+      }
+    },
+    "launch": {
+      "steps": {
+        "ship-and-monitor": {
+          "tasks": {
+            "sm-1": { "completed": false },
+            "sm-2": { "completed": false },
+            "sm-3": { "completed": false },
+            "sm-4": { "completed": false },
+            "sm-5": { "completed": false }
+          }
+        }
+      }
+    },
+    "post-launch": {
+      "steps": {
+        "feedback-and-iteration": {
+          "tasks": {
+            "fi-1": { "completed": false },
+            "fi-2": { "completed": false },
+            "fi-3": { "completed": false },
+            "fi-4": { "completed": false },
+            "fi-5": { "completed": false }
+          }
+        }
+      }
+    }
+  }
+}

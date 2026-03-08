@@ -1,35 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="dark">
 <head>
   <!-- HEAVY_THEME -->
   <style>
-    body {
-      height: auto;
+    /* Plugin tokens — colors with no HDS equivalent */
+    :root {
+      --publish-prep-orange: #d08770;
+      --publish-prep-blue: #8fa1b3;
     }
 
     .specs {
-      margin-bottom: 12px;
+      margin-bottom: var(--hds-space-12);
     }
 
     .specs table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 11px;
+      font-size: var(--hds-font-size-body-xs);
     }
 
     .specs td {
-      padding: 4px 0;
-      border-bottom: 1px solid #4f5b66;
+      padding: var(--hds-space-4) 0;
+      border-bottom: 1px solid var(--hds-border-default);
     }
 
     .specs td:first-child {
-      color: #eff1f5;
+      color: var(--hds-text-strong);
       font-weight: 500;
     }
 
     .specs td:last-child {
       text-align: right;
-      color: #65737e;
+      color: var(--hds-text-muted);
     }
 
     .specs tr:last-child td {
@@ -37,7 +39,7 @@
     }
 
     .form-group {
-      margin-bottom: 12px;
+      margin-bottom: var(--hds-space-12);
     }
 
     .form-group input[type="number"] {
@@ -57,33 +59,17 @@
     }
 
     .export-row {
-      margin-top: 8px;
+      margin-top: var(--hds-space-8);
     }
 
     .export-row button {
       width: 100%;
-      font-size: 10px;
-      padding: 6px 8px;
-    }
-
-    .feedback-link {
-      text-align: center;
-      margin-top: 8px;
-      font-size: 10px;
-    }
-
-    .feedback-link a {
-      color: #65737e;
-      text-decoration: none;
-      transition: color 0.15s ease;
-    }
-
-    .feedback-link a:hover {
-      color: #8fa1b3;
+      font-size: var(--hds-font-size-body-xs);
+      padding: var(--hds-space-4) var(--hds-space-8);
     }
 
     .upload-group {
-      margin-bottom: 12px;
+      margin-bottom: var(--hds-space-12);
     }
 
     .upload-row {
@@ -94,25 +80,53 @@
 
     .upload-btn {
       height: 32px;
-      padding: 0 12px;
+      padding: 0 var(--hds-space-12);
       font-family: inherit;
-      font-size: 11px;
-      color: #c0c5ce;
-      background-color: rgba(79, 91, 102, 0.5);
+      font-size: var(--hds-font-size-body-xs);
+      color: var(--hds-text-default);
+      background-color: var(--hds-action-secondary-bg-hover);
       border: none;
-      border-radius: 3px;
+      border-radius: var(--hds-radius-sm);
       cursor: pointer;
       transition: background-color 100ms ease;
     }
 
     .upload-btn:hover {
-      background-color: rgba(79, 91, 102, 0.7);
+      background-color: var(--hds-action-secondary-bg-hover);
+      opacity: 0.8;
     }
 
     .upload-count {
-      font-size: 10px;
-      color: #65737e;
-      margin-top: 4px;
+      font-size: var(--hds-font-size-body-xs);
+      color: var(--hds-text-muted);
+      margin-top: var(--hds-space-4);
+    }
+
+    .toggle-btn {
+      height: 32px;
+      padding: 0 var(--hds-space-12);
+      font-family: inherit;
+      font-size: var(--hds-font-size-body-xs);
+      color: var(--hds-text-default);
+      background-color: var(--hds-action-secondary-bg-hover);
+      border: 1px solid transparent;
+      border-radius: var(--hds-radius-sm);
+      cursor: pointer;
+      transition: background-color 100ms ease;
+    }
+
+    .toggle-btn:hover {
+      background-color: var(--hds-action-secondary-bg-hover);
+      opacity: 0.8;
+    }
+
+    .toggle-btn.selected {
+      background-color: var(--hds-text-muted);
+      color: var(--hds-bg-default);
+    }
+
+    .toggle-btn.selected:hover {
+      background-color: var(--hds-text-muted);
     }
   </style>
 </head>
@@ -167,6 +181,13 @@
       </div>
     </div>
 
+    <div class="form-group" id="outline-option" style="display: none;">
+      <div class="form-row">
+        <label style="margin-bottom: 0;">Outline</label>
+        <button type="button" class="toggle-btn selected" id="show-outline" role="checkbox" aria-checked="true">On</button>
+      </div>
+    </div>
+
     <div class="upload-group">
       <div class="upload-row">
         <label style="margin-bottom: 0;">Images</label>
@@ -182,26 +203,21 @@
 
   <!-- Actions -->
   <div class="actions">
-    <button class="btn-secondary" id="cancel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>Cancel</button>
-    <button class="btn-primary" id="create"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>Create</button>
+    <button class="hds-btn hds-btn--primary" id="create"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>Create</button>
   </div>
 
   <!-- Export all -->
   <div class="export-row">
-    <button class="btn-secondary" id="export-all"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Select All for Export</button>
+    <button class="hds-btn hds-btn--secondary" id="export-all"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Select All for Export</button>
   </div>
 
   <div class="support-link">
-    <a href="#" id="support-link">Support this plugin &#9829;</a>
-  </div>
-
-  <div class="feedback-link">
-    <a href="#" id="feedback-link">Send feedback</a>
+    <a href="#" id="feedback-link">Feedback</a> · <a href="#" id="support-link">Buy me a coffee <span style="font-size: 14px">&#9749;</span></a> · <button class="theme-toggle" id="theme-toggle" title="Toggle light/dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></button>
   </div>
 
   <script>
-    const SUPPORT_URL = 'https://heavy.lemonsqueezy.com';
-    const FEEDBACK_URL = 'https://github.com/keithbarney';
+    var FEEDBACK_URL = 'mailto:keithbarneydesign@gmail.com?subject=Heavy Publish Prep Feedback';
+    var SUPPORT_URL = 'https://buy.stripe.com/8x2eVfdpYfbW5Rd1Ax87K01';
 
     const PRESET_SPECS = {
       figma: {
@@ -228,11 +244,20 @@
     const screenshotInput = document.getElementById('screenshot-count');
     const templateSelect = document.getElementById('screenshot-template');
     const createBtn = document.getElementById('create');
-    const cancelBtn = document.getElementById('cancel');
     const exportBtn = document.getElementById('export-all');
     const uploadBtn = document.getElementById('upload-btn');
     const fileInput = document.getElementById('screenshot-files');
     const uploadCount = document.getElementById('upload-count');
+    const outlineOption = document.getElementById('outline-option');
+    const outlineBtn = document.getElementById('show-outline');
+    var outlineOn = true;
+
+    outlineBtn.addEventListener('click', function() {
+      outlineOn = !outlineOn;
+      outlineBtn.classList.toggle('selected', outlineOn);
+      outlineBtn.setAttribute('aria-checked', String(outlineOn));
+      outlineBtn.textContent = outlineOn ? 'On' : 'Off';
+    });
 
     uploadBtn.addEventListener('click', function() { fileInput.click(); });
     fileInput.addEventListener('change', function() {
@@ -248,8 +273,14 @@
       screenshotOptions.style.display = config.hasScreenshots ? 'block' : 'none';
     }
 
-    presetSelect.addEventListener('change', updatePreset);
+    function updateTemplateOptions() {
+      outlineOption.style.display = templateSelect.value === 'centered' ? 'block' : 'none';
+    }
+
+    templateSelect.addEventListener('change', updateTemplateOptions);
+    presetSelect.addEventListener('change', function() { updatePreset(); updateTemplateOptions(); });
     updatePreset();
+    updateTemplateOptions();
 
     // Handle init message with saved settings
     window.onmessage = function(event) {
@@ -262,7 +293,12 @@
         presetSelect.value = msg.preset;
         screenshotInput.value = msg.screenshotCount;
         templateSelect.value = msg.screenshotTemplate;
+        outlineOn = msg.showOutline;
+        outlineBtn.classList.toggle('selected', outlineOn);
+        outlineBtn.setAttribute('aria-checked', String(outlineOn));
+        outlineBtn.textContent = outlineOn ? 'On' : 'Off';
         updatePreset();
+        updateTemplateOptions();
       }
     };
 
@@ -313,6 +349,7 @@
           screenshotCount: clamped,
           screenshotTemplate: templateSelect.value,
           preset: presetSelect.value,
+          showOutline: outlineOn,
         };
         if (images && images.length > 0) {
           msg.images = images;
@@ -332,10 +369,6 @@
 
     createBtn.addEventListener('click', doCreate);
 
-    cancelBtn.addEventListener('click', function() {
-      parent.postMessage({ pluginMessage: { type: 'close' } }, '*');
-    });
-
     exportBtn.addEventListener('click', function() {
       parent.postMessage({ pluginMessage: { type: 'export-all' } }, '*');
     });
@@ -352,8 +385,31 @@
 
     // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') cancelBtn.click();
       if (e.key === 'Enter' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'INPUT') doCreate();
+    });
+
+    // Theme toggle
+    var sunIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>';
+    var moonIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>';
+    var themeToggle = document.getElementById('theme-toggle');
+    try { var savedTheme = localStorage.getItem('heavy-plugin-theme'); } catch(e) { var savedTheme = null; }
+    if (savedTheme === 'light') {
+      document.documentElement.removeAttribute('data-theme');
+      themeToggle.innerHTML = moonIcon;
+    } else {
+      themeToggle.innerHTML = sunIcon;
+    }
+    themeToggle.addEventListener('click', function() {
+      var isDark = document.documentElement.hasAttribute('data-theme');
+      if (isDark) {
+        document.documentElement.removeAttribute('data-theme');
+        try { localStorage.setItem('heavy-plugin-theme', 'light'); } catch(e) {}
+        themeToggle.innerHTML = moonIcon;
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        try { localStorage.removeItem('heavy-plugin-theme'); } catch(e) {}
+        themeToggle.innerHTML = sunIcon;
+      }
     });
 
     // Auto-resize to fit content
