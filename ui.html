@@ -3195,6 +3195,7 @@ p, .hds-body {
   animation-delay: calc(var(--stagger-delay) * 11);
 }
 
+
   </style>
   <style>
     /* Plugin tokens — colors with no HDS equivalent */
@@ -3459,10 +3460,12 @@ p, .hds-body {
       uploadCount.textContent = n > 0 ? n + ' image' + (n > 1 ? 's' : '') + ' selected' : '';
     });
 
+    function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
     function updatePreset() {
       const config = PRESET_SPECS[presetSelect.value];
       specsBody.innerHTML = config.specs.map(function(s) {
-        return '<tr><td>' + s.name + '</td><td>' + s.size + '</td></tr>';
+        return '<tr><td>' + escapeHtml(s.name) + '</td><td>' + escapeHtml(s.size) + '</td></tr>';
       }).join('');
       screenshotOptions.style.display = config.hasScreenshots ? 'block' : 'none';
     }

@@ -252,7 +252,7 @@ async function createPublishingAssets(
       const existingFrame = existingFrames.get(name);
 
       if (existingFrame) {
-        allFrames.push(existingFrame);
+        // Already in allFrames from initial collection pass — just track for image application
         screenshotFrames.push(existingFrame);
         continue;
       }
